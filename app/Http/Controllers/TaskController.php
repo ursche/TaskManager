@@ -45,10 +45,20 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $this->authorize('update', $task);
-        $request->validate(['title' => 'required|max:255']);
-        $task->update($request->only('title', 'description', 'status'));
+    
+        $request->validate([
+            'title' => 'required|max:255',
+        ]);
+    
+        $task->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'status'      => $request->has('status') ? 1 : 0,  // <-- FIXED
+        ]);
+    
         return redirect()->route('tasks.index')->with('success', 'Task updated.');
     }
+
 
     public function destroy(Task $task)
     {
